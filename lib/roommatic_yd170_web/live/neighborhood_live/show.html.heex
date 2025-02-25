@@ -1,0 +1,26 @@
+<.header>
+  Neighborhood <%= @neighborhood.id %>
+  <:subtitle>This is a neighborhood record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/neighborhoods/#{@neighborhood}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit neighborhood</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @neighborhood.name %></:item>
+</.list>
+
+<.back navigate={~p"/neighborhoods"}>Back to neighborhoods</.back>
+
+<.modal :if={@live_action == :edit} id="neighborhood-modal" show on_cancel={JS.patch(~p"/neighborhoods/#{@neighborhood}")}>
+  <.live_component
+    module={RoommaticYd170Web.NeighborhoodLive.FormComponent}
+    id={@neighborhood.id}
+    title={@page_title}
+    action={@live_action}
+    neighborhood={@neighborhood}
+    patch={~p"/neighborhoods/#{@neighborhood}"}
+  />
+</.modal>

@@ -1,0 +1,41 @@
+<.header>
+  Listing Neighborhoods
+  <:actions>
+    <.link patch={~p"/neighborhoods/new"}>
+      <.button>New Neighborhood</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="neighborhoods"
+  rows={@streams.neighborhoods}
+  row_click={fn {_id, neighborhood} -> JS.navigate(~p"/neighborhoods/#{neighborhood}") end}
+>
+  <:col :let={{_id, neighborhood}} label="Name"><%= neighborhood.name %></:col>
+  <:action :let={{_id, neighborhood}}>
+    <div class="sr-only">
+      <.link navigate={~p"/neighborhoods/#{neighborhood}"}>Show</.link>
+    </div>
+    <.link patch={~p"/neighborhoods/#{neighborhood}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, neighborhood}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: neighborhood.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="neighborhood-modal" show on_cancel={JS.patch(~p"/neighborhoods")}>
+  <.live_component
+    module={RoommaticYd170Web.NeighborhoodLive.FormComponent}
+    id={@neighborhood.id || :new}
+    title={@page_title}
+    action={@live_action}
+    neighborhood={@neighborhood}
+    patch={~p"/neighborhoods"}
+  />
+</.modal>

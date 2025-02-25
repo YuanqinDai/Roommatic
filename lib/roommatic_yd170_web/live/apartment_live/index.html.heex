@@ -1,0 +1,44 @@
+<.header>
+  Listing Apartments
+  <:actions>
+    <.link patch={~p"/apartments/new"}>
+      <.button>New Apartment</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="apartments"
+  rows={@streams.apartments}
+  row_click={fn {_id, apartment} -> JS.navigate(~p"/apartments/#{apartment}") end}
+>
+  <:col :let={{_id, apartment}} label="Street address"><%= apartment.street_address %></:col>
+  <:col :let={{_id, apartment}} label="Bedrooms"><%= apartment.bedrooms %></:col>
+  <:col :let={{_id, apartment}} label="Rent"><%= apartment.rent %></:col>
+  <:col :let={{_id, apartment}} label="Notes"><%= apartment.notes %></:col>
+  <:action :let={{_id, apartment}}>
+    <div class="sr-only">
+      <.link navigate={~p"/apartments/#{apartment}"}>Show</.link>
+    </div>
+    <.link patch={~p"/apartments/#{apartment}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, apartment}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: apartment.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="apartment-modal" show on_cancel={JS.patch(~p"/apartments")}>
+  <.live_component
+    module={RoommaticYd170Web.ApartmentLive.FormComponent}
+    id={@apartment.id || :new}
+    title={@page_title}
+    action={@live_action}
+    apartment={@apartment}
+    patch={~p"/apartments"}
+  />
+</.modal>
