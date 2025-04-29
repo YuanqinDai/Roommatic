@@ -1,4 +1,4 @@
-# RoommaticYd170
+# Roommatic
 
 To start your Phoenix server:
 
